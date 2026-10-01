@@ -5,8 +5,9 @@ sequenceDiagram
 
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
-    server-->>browser: 302 Found User Redirect to /notes
+    server-->>browser: User Redirect to /notes
     deactivate server
+    Note right of browser: The /new_note executes a code on the server to add the new note on the list
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
