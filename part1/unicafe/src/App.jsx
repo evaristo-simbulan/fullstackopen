@@ -2,9 +2,7 @@ import { useState } from 'react'
 
 const Button = ({ onClick, text }) => {
   return (
-    <>
-      <button onClick={onClick}>{text}</button>
-    </>
+    <button onClick={onClick}>{text}</button>
   )
 }
 
@@ -20,12 +18,9 @@ const StatisticLine = ({ text, value }) => {
 const Statistics = ({ good, neutral, bad }) => {
 
   const sum = good + neutral + bad;
-
-  if (good === 0 && neutral === 0 && bad === 0) {
+  if (sum === 0) {
     return (
-      <>
-        <p>No feedback given</p>
-      </>
+      <p>No feedback given</p>
     )
   }
 
@@ -36,8 +31,8 @@ const Statistics = ({ good, neutral, bad }) => {
         <StatisticLine text="neutral" value={neutral} />
         <StatisticLine text="bad" value={bad} />
         <StatisticLine text="all" value={sum} />
-        <StatisticLine text="average" value={sum === 0 ? 0 : (good - bad) / sum} />
-        <StatisticLine text="positive" value={sum === 0 ? 0 : (good / sum) * 100} />
+        <StatisticLine text="average" value={(good - bad) / sum} />
+        <StatisticLine text="positive" value={(good / sum) * 100 + ' %'} />
       </tbody>
     </table>
   )
