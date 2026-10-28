@@ -61,6 +61,18 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const handleDeletePersonPopUp = (person) => {
+    console.log(person)
+    if (window.confirm(`delete ${person.name}`)) {
+      personService.deleteItem(person.id)
+        .then(response => setPersons(persons.filter(p => p.id !== response.id)))
+    } else {
+      console.log('no')
+    }
+
+  }
+
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -69,7 +81,7 @@ const App = () => {
       <PersonForm onAddPerson={addPerson} onNameChange={handleNameChange} onNumberChange={handleNumberChange}
         newName={newName} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} onDeletePerson={handleDeletePersonPopUp} />
     </div>
   )
 }
