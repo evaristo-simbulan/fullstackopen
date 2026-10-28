@@ -34,6 +34,11 @@
       "name": "hgfhfgh",
       "number": "124-234",
       "id": "q3qykg42rLI"
+    },
+    {
+      "name": "dfgdfg",
+      "number": "123-3456",
+      "id": "lRTkKNO1zYs"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
