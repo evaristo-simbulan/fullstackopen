@@ -44,7 +44,11 @@ const App = () => {
         number: newNumber,
         id: Math.max(0, ...persons.map(p => p.id)) + 1
       }
-      setPersons(persons.concat(personObject))
+      axios.post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+      })
+    
     }
     setNewName('')
     setNewNumber('')
