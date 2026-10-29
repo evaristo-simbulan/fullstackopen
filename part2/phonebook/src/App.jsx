@@ -3,6 +3,8 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
+import Notification from './components/Notification'
+import './index.css'
 
 const App = () => {
 
@@ -10,6 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+
   const hook = () => {
     personService.getAll()
       .then(allPersons => setPersons(allPersons))
@@ -35,8 +39,15 @@ const App = () => {
     if (checkIfPersonExists(name)) {
       if (window.confirm(`${name} is already added on to phonebook, replace the old number with the new one?`)) {
         const person = persons.find(p => p.name === name)
-        const changedPerson = { ...person, number: newNumber}
+        const changedPerson = { ...person, number: newNumber }
         personService.updateItem(person.id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id === returnedPerson.id ? returnedPerson : p))
+            setErrorMessage(`Updated ${returnedPerson.name}`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
       }
     } else {
       const personObject = {
@@ -45,9 +56,16 @@ const App = () => {
         id: Math.max(0, ...persons.map(p => p.id)) + 1
       }
       personService.create(personObject)
-        .then(returnedPerson => setPersons(persons.concat(returnedPerson)))
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setErrorMessage(`Added ${returnedPerson.name}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
 
     }
+
     setNewName('')
     setNewNumber('')
   }
@@ -79,6 +97,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} messageType="info" />
       <Filter value={filter} onSearch={handleSearchChange} />
       <h2>add a new</h2>
       <PersonForm onAddPerson={addPerson} onNameChange={handleNameChange} onNumberChange={handleNumberChange}
