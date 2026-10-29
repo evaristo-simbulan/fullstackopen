@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import axios from 'axios'
 import Countries from "./components/Countries"
+import CountryInfo from "./components/CountryInfo"
 
 function App() {
 
   const [countries, setCountries] = useState([])
   const [searchCountry, setSearchCountry] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     axios.get('https://studies.cs.helsinki.fi/restcountries/api/all')
@@ -18,6 +20,11 @@ function App() {
 
   const handleCountrySearchChange = (event) => {
     setSearchCountry(event.target.value)
+    setSelectedCountry(null)
+  }
+
+  const handleCountryShowSelect = (country) => {
+    setSelectedCountry(country)
   }
 
   return (
@@ -25,7 +32,7 @@ function App() {
       <div>
         find countries <input value={searchCountry} onChange={handleCountrySearchChange} />
       </div>
-      <Countries countries={countriesToShow} />
+      {selectedCountry ? <CountryInfo country={selectedCountry} /> : <Countries countries={countriesToShow} onCountryShowSelect={handleCountryShowSelect} />}
     </div>
   )
 }
