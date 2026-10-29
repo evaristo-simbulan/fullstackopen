@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import axios from 'axios'
+import Countries from "./components/Countries"
 
 function App() {
 
@@ -7,10 +8,8 @@ function App() {
   const [searchCountry, setSearchCountry] = useState('')
 
   useEffect(() => {
-    console.log('hello')
     axios.get('https://studies.cs.helsinki.fi/restcountries/api/all')
       .then(response => {
-        console.log(response.data)
         setCountries(response.data)
       })
   }, [])
@@ -23,14 +22,10 @@ function App() {
 
   return (
     <div>
-      <form>
-        <div>
-          find countries <input value={searchCountry} onChange={handleCountrySearchChange} />
-        </div>
-      </form>
-      
-      {countriesToShow.length > 11 ? <p>Too many matches, specify another filter</p> :  countriesToShow.map(c => <p key={c.name.common}>{c.name.common}</p>)}
-
+      <div>
+        find countries <input value={searchCountry} onChange={handleCountrySearchChange} />
+      </div>
+      <Countries countries={countriesToShow} />
     </div>
   )
 }
