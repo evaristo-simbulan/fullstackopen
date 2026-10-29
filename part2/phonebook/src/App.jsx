@@ -33,8 +33,11 @@ const App = () => {
       return
     }
     if (checkIfPersonExists(name)) {
-      alert(`${name} is already added to phonebook`)
-      return
+      if (window.confirm(`${name} is already added on to phonebook, replace the old number with the new one?`)) {
+        const person = persons.find(p => p.name === name)
+        const changedPerson = { ...person, number: newNumber}
+        personService.updateItem(person.id, changedPerson)
+      }
     } else {
       const personObject = {
         name: name,
