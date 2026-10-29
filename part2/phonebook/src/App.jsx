@@ -12,7 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState(null)
+  const [messageType, setMessageType] = useState('info')
 
   const hook = () => {
     personService.getAll()
@@ -43,24 +44,33 @@ const App = () => {
         personService.updateItem(person.id, changedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id === returnedPerson.id ? returnedPerson : p))
-            setErrorMessage(`Updated ${returnedPerson.name}`)
+            setNotification(`Updated ${returnedPerson.name}`)
+            setMessageType('info')
             setTimeout(() => {
-              setErrorMessage(null)
+              setNotification(null)
             }, 5000)
+          })
+          .catch(() => {
+            setNotification(`Information of ${person.name} has already been removed from server`)
+            setMessageType('error')
+            setTimeout(() => {
+              setNotification(null)
+            }, 5000)
+            setPersons(persons.filter(p => p.id !== person.id))
           })
       }
     } else {
       const personObject = {
         name: name,
-        number: newNumber,
-        id: Math.max(0, ...persons.map(p => p.id)) + 1
+        number: newNumber
       }
       personService.create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          setErrorMessage(`Added ${returnedPerson.name}`)
+          setNotification(`Added ${returnedPerson.name}`)
+          setMessageType('info')
           setTimeout(() => {
-            setErrorMessage(null)
+            setNotification(null)
           }, 5000)
         })
 
@@ -83,21 +93,25 @@ const App = () => {
   }
 
   const handleDeletePersonPopUp = (person) => {
-    console.log(person)
     if (window.confirm(`delete ${person.name}`)) {
       personService.deleteItem(person.id)
-        .then(response => setPersons(persons.filter(p => p.id !== response.id)))
-    } else {
-      console.log('no')
+        .then(() => setPersons(persons.filter(p => p.id !== person.id)))
+        .catch(() => {
+          setNotification(`Information of ${person.name} has already been removed from server`)
+          setMessageType('error')
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
+          setPersons(persons.filter(p => p.id !== person.id))
+        })
     }
-
   }
 
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} messageType="info" />
+      <Notification message={notification} messageType={messageType} />
       <Filter value={filter} onSearch={handleSearchChange} />
       <h2>add a new</h2>
       <PersonForm onAddPerson={addPerson} onNameChange={handleNameChange} onNumberChange={handleNumberChange}
