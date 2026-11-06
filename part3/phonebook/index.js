@@ -3,9 +3,10 @@ const morgan = require('morgan')
 
 const app = express()
 
-app.use(express.json())
-app.use(morgan('tiny'))
+morgan.token('body', request => JSON.stringify(request.body))
 
+app.use(express.json())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 let persons = [
     {
@@ -31,7 +32,7 @@ let persons = [
 ]
 
 const generateId = () => {
-    return Math.floor(Math.random() * 100000)
+    return String(Math.floor(Math.random() * 100000))
 }
 
 
@@ -58,8 +59,6 @@ app.delete(`/api/persons/:id`, (request, response) => {
 
 app.post(`/api/persons`, (request, response) => {
     const body = request.body
-    console.log(request)
-
     if (!body) {
         return response.status(400).json({
             error: 'no request body'
@@ -99,7 +98,7 @@ app.post(`/api/persons`, (request, response) => {
 
 app.get('/info', (request, response) => {
     const appInfo = `<p>Phonebook has info of ${persons.length} people</p>
-    <p>${new Date().toString()}<p/>`
+    <p>${new Date().toString()}</p>`
     response.send(appInfo)
 })
 
