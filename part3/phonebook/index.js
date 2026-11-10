@@ -105,9 +105,12 @@ app.put(`/api/persons/:id`, (request, response, next) => {
 })
 
 app.get('/info', (request, response) => {
-    const appInfo = `<p>Phonebook has info of ${persons.length} people</p>
-    <p>${new Date().toString()}</p>`
-    response.send(appInfo)
+    Person.countDocuments().then(count => {
+        const appInfo = `<p>Phonebook has info of ${count} people</p>
+            <p>${new Date().toString()}</p>`
+        response.send(appInfo)
+    })
+
 })
 
 const errorHandler = (error, request, response, next) => {
